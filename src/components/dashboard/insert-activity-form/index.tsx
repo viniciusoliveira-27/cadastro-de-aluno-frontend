@@ -1,6 +1,6 @@
-import { Button } from "../../button";
-import { Input } from "../../input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../select";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 
 
 export function InsertActivityForm() {
