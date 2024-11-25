@@ -5,4 +5,11 @@ export const frontendApi = axios.create({
     headers: {
         "Content-Type": "application/json"
     }
-})
+});
+//aqui vem a variavel de ambiente 
+export const backendApi = axios.create({
+    baseURL: "http://localhost:8000",
+    headers: {
+        "Content-Type": "application/json"
+    }
+});
