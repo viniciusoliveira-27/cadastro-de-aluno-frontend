@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = await request.json();
 
+    console.log(email, password);
+
     // const data = JSON.stringify({email: email, password: password})
     const data = JSON.stringify({ email, password });
 
@@ -45,6 +47,7 @@ export async function POST(request: NextRequest) {
             response = { error: axiosError.message };
         }
     }
+    console.log(response);
 
     return new Response(JSON.stringify(response));
 }
