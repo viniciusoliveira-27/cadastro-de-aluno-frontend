@@ -8,6 +8,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { frontendApi } from "@/lib/api";
+import { LoginResponseType } from "@/app/api/auth/login/route";
+import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { CustomAlert, CustomAlertType } from "@/components/general/custom-alert";
+import { AxiosError } from "axios";
 
 const loginFormSchema = z.object({
     email: z.string().email({ message: "E-mail invalido" }),
@@ -17,6 +22,8 @@ const loginFormSchema = z.object({
 type LoginFormType = z.infer<typeof loginFormSchema>;
 
 export function LoginForm() {
+
+    const [message, setMessage] = useState(<></>);
 
     const loginForm = useForm<LoginFormType>({
         resolver: zodResolver(loginFormSchema),
@@ -33,9 +40,48 @@ export function LoginForm() {
             password        
         });
 
-        const result = await frontendApi.post("/auth/login", data);
+        try{
+            const result = await frontendApi.post("/auth/login", data);
 
-        console.log(result);
+            const {token, error} = result.data as LoginResponseType;
+
+
+
+            if(error) {
+                const message = <CustomAlert
+                    type={CustomAlertType.ERROR}
+                    title="Erro ao logar-se"
+                    message={error}
+                />;
+                setMessage(message);
+            } else if (token) {
+                const message = <CustomAlert
+                    type={CustomAlertType.SUCCESS}
+                    title="Sucesso ao logar-se"
+                    message={token}
+                />;
+            setMessage(message);
+            } else {
+                const message = <CustomAlert
+                    type={CustomAlertType.ERROR}
+                    title="Erro ao logar-se"
+                    message="Erro não identificado. Por favor tente mais tarde"
+                />;
+                setMessage(message);
+            }
+        } catch (e) {
+            const axiosError = e as AxiosError;
+
+            const message = <CustomAlert
+                type={CustomAlertType.ERROR}
+                title="Erro ao logar-se"
+                message={axiosError.message}
+            />;
+            setMessage(message);
+            
+        }
+
+               
     }
 
 
@@ -52,6 +98,7 @@ export function LoginForm() {
 
                     <Form {...loginForm}>
                         <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)}>
+                            {message}
                             <FormField
                                 control={loginForm.control}
                                 name="email"
