@@ -1,4 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertTriangleIcon, CheckIcon } from "lucide-react";
 
 export const enum CustomAlertType {
     SUCCESS = "success",
@@ -29,11 +30,12 @@ type SuccessAlertProps = {
 
 function SuccessAlert({ title, message }: SuccessAlertProps) {
     return (
-        <Alert className="flex-row border-emerald-500">
-            <AlertTitle className="font-bold px-4">
+        <Alert className="flex-row mx-4 border-emerald-500">
+            <CheckIcon className="h-8 w-8 stroke-emerald-500" />
+            <AlertTitle className="font-bold mx-4">
                 {title}
             </AlertTitle>
-            <AlertDescription className="font-thin px-4">
+            <AlertDescription className="font-thin mx-4">
                 {message}
             </AlertDescription>
         </Alert>
@@ -49,10 +51,11 @@ type ErrorAlertProps = {
 function ErrorAlert({ title, message }: ErrorAlertProps) {
     return (
         <Alert className="flex-row border-red-500">
-            <AlertTitle className="font-bold px-4">
+            <AlertTriangleIcon className="h-8 w-8  stroke-red-500"  />
+            <AlertTitle className="font-bold mx-4">
                 {title}
             </AlertTitle>
-            <AlertDescription className="font-thin px-4">
+            <AlertDescription className="font-thin mx-4">
                 {message}
             </AlertDescription>
         </Alert>
