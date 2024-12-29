@@ -9,10 +9,12 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { frontendApi } from "@/lib/api";
 import { LoginResponseType } from "@/app/api/auth/login/route";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CustomAlert, CustomAlertType } from "@/components/general/custom-alert";
 import { AxiosError } from "axios";
+import { AuthContext } from "@/context/auth-context";
+import { useRouter } from "next/navigation";
 
 const loginFormSchema = z.object({
     email: z.string().email({ message: "E-mail invalido" }),
@@ -25,6 +27,10 @@ export function LoginForm() {
 
     const [message, setMessage] = useState(<></>);
 
+    const authContext = useContext(AuthContext);
+
+    const router = useRouter()
+
     const loginForm = useForm<LoginFormType>({
         resolver: zodResolver(loginFormSchema),
         defaultValues: {
@@ -34,41 +40,34 @@ export function LoginForm() {
     });
 
     async function handleLoginSubmit({ email, password }: LoginFormType) {
-        
+
         const data = JSON.stringify({
             email,
-            password        
+            password
         });
 
-        try{
+        try {
             const result = await frontendApi.post("/auth/login", data);
 
-            const {token, error} = result.data as LoginResponseType;
+            const { token, error } = result.data as LoginResponseType;
 
+            if (token) {
+                authContext.signIn(token)
+                router.push("/dashboard")
 
-
-            if(error) {
-                const message = <CustomAlert
-                    type={CustomAlertType.ERROR}
-                    title="Erro ao logar-se"
-                    message={error}
-                />;
-                setMessage(message);
-            } else if (token) {
-                const message = <CustomAlert
-                    type={CustomAlertType.SUCCESS}
-                    title="Sucesso ao logar-se"
-                    message={token}
-                />;
-            setMessage(message);
             } else {
                 const message = <CustomAlert
                     type={CustomAlertType.ERROR}
                     title="Erro ao logar-se"
-                    message="Erro não identificado. Por favor tente mais tarde"
+                    message={error || "Erro desconhecido"}
                 />;
                 setMessage(message);
+
             }
+
+
+
+
         } catch (e) {
             const axiosError = e as AxiosError;
 
@@ -78,10 +77,10 @@ export function LoginForm() {
                 message={axiosError.message}
             />;
             setMessage(message);
-            
+
         }
 
-               
+
     }
 
 

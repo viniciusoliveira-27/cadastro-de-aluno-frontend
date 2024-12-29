@@ -1,5 +1,7 @@
 'use client'
 
+import { deleteCookie, getCookie } from "cookies-next";
+import { setCookie } from "cookies-next/client";
 import React, { createContext } from "react";
 
 type AuthContextType = {
@@ -12,18 +14,22 @@ type AuthContextType = {
 export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthContextProvider({ children }: { children: React.ReactNode }) {
-    var isAuthenticated = false;
+    var isAuthenticated = !!recoveryToken();
 
-    function signIn(toke: string) {
-
+    function signIn(token: string) {
+        setCookie("cadastro-de-aluno.token", token)
     }
 
     function signOut() {
-
+        deleteCookie("cadastro-de-aluno.token")
     }
 
     function recoveryToken() {
-        return "";
+        const cookie = getCookie("cadastro-de-aluno.token")
+
+        const token = cookie?.toString();
+
+        return token;
     }
 
     return (
